@@ -47,7 +47,8 @@ X = [[data_train_party(1:n_train_per_genre, 3:4)]', [data_train_dinner(1:n_train
 
 % assigne étiquette 0 à une catégorie et 1 à l'autre
 y = [zeros(1, n_train_per_genre), ones(1, n_train_per_genre)]';
-plotData(X,y);
+plotData(X,y)
+xlim([18 25])
 
 %C = 10000; 
 %model = svmTrain(X, y, C, @linearKernel, 1e-3, 8); 
