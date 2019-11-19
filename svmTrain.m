@@ -59,7 +59,7 @@ elseif strfind(func2str(kernelFunction), 'gaussianKernel')
     % This is equivalent to computing the kernel on every pair of examples
     X2 = sum(X.^2, 2);
     K = bsxfun(@plus, X2, bsxfun(@plus, X2', - 2 * (X * X')));
-    K = kernelFunction(1, 0) .^ K;
+    K = kernelFunction(1, 0, 1) .^ K;
 else
     % Pre-compute the Kernel Matrix
     % The following can be slow due to the lack of vectorization
