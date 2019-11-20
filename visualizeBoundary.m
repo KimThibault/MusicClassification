@@ -5,6 +5,7 @@ function visualizeBoundary(X, y, model, varargin)
 
 % Plot the training data on top of the boundary
 plotData(X, y)
+xlim([18 25])
 
 % Make classification predictions over a grid of values
 x1plot = linspace(min(X(:,1)), max(X(:,1)), 100)';
@@ -18,8 +19,8 @@ end
 
 % Plot the SVM boundary
 hold on
-colormap ("default");
-contour(X1, X2, vals, [0 0], 'b')
+#colormap ("default");
+contour(X1, X2, vals, [1 1], 'b')
 hold off;
 
 end

@@ -54,8 +54,10 @@ C = 10000;
 model = svmTrain(X, y, C, @linearKernel, 1e-3, 8); 
 #visualizeBoundaryLinear(X, y, model); 
 
-x1 = [1 2 1]; 
-x2 = [0 4 -1]; 
-sigma = 2;
+#x1 = [1 2 1]; 
+#x2 = [0 4 -1]; 
+x1 = X(:,1);
+x2 = X(:,2);
+sigma = 1;
 sim = gaussianKernel(x1, x2, sigma);
 visualizeBoundary(X, y, model, 0.5);
