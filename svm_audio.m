@@ -39,24 +39,19 @@ data_test_genre2 = set_genre2(n_train_genre2 + n_crossval_genre2 + 1 : n_train_g
 
 %% Entrainement du modele
 n_train_per_genre = min(n_train_genre2, n_train_genre1);
+
 % select certain features to plot 2 by 2 graph
 X = [[data_train_genre1(1:n_train_per_genre, 3:4)]', [data_train_genre2(1:n_train_per_genre, 3:4)]']'; 
 [X, mu, sigma] = featureNormalize(X);
 
-% assigne étiquette 0 à une catégorie et 1 à l'autre
 y = [zeros(1, n_train_per_genre), ones(1, n_train_per_genre)]';
 plotData(X,y);
 xlim([-0.16 -0.12]);
 
 C = 10000; 
-#model = svmTrain(X, y, C, @linearKernel, 1e-3, 8); 
-#visualizeBoundaryLinear(X, y, model); 
-
-#x1 = [1 2 1]; 
-#x2 = [0 4 -1]; 
-x1 = X(:,1);
-x2 = X(:,2);
-sigma = 1;
+sigma = 0.1;
+x1 = [-0.13 -0.135 -0.135 -0.14]; 
+x2 = [0 1.5 -0.5 0]; 
 
 model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma)); 
 visualizeBoundary(X, y, model);
