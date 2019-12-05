@@ -46,10 +46,10 @@ X = [[data_train_genre1(1:n_train_per_genre, 3:4)]', [data_train_genre2(1:n_trai
 
 y = [zeros(1, n_train_per_genre), ones(1, n_train_per_genre)]';
 plotData(X,y);
-xlim([-0.16 -0.12]);
+xlim([-0.2 0.5]);
 
-C = 10000; 
-sigma = 0.1;
+C = 1000; 
+sigma = 0.3;
 x1 = [-0.13 -0.135 -0.135 -0.14]; 
 x2 = [0 1.5 -0.5 0]; 
 
