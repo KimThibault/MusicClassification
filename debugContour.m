@@ -1,28 +1,25 @@
 function debugContour()
-  
+% class 1 is inside circle, 0 outside
+
 n_points = 100;  
 radius = 0.5;
+X = 1 - 2*rand(n_points, 2);
+y = int8(X(:,1).^2 + X(:,2).^2 < radius^2);
 
-xrandom = 1 - 2*rand(n_points,1); 
-yrandom = 1 - 2*rand(n_points,1);
-# WIP trouver la relation entre xrandom et X, i.e. comment changer xrandom en X
-X = [xrandom, yrandom];
-
-# class 1 inside circle, 0 outside
-vals_debug = xrandom.^2 + yrandom.^2 < radius^2;
-
-plotData(X, vals_debug)
+plotData(X, y)
 hold on
 
-# anatomy of contour, original example from the internets
-%x = linspace(-10, 10, 100);
-%y = linspace(-10, 10, 100);
-%[X,Y] = meshgrid(x, y);
-%vals= X.^2 + (Y.^2);
-%contour(x,y,vals, [0.5, 0.5]);
-
-# invalid zdata (vals_debug)
-contour(xrandom, yrandom, vals_debug, [0.5 0.5], 'LineColor', 'b')
+# values from -1 to 1
+xplot = linspace(-1, 1, n_points)'; 
+yplot = linspace(-1, 1, n_points)'; 
+[XX,YY] = meshgrid(xplot, yplot); 
+vals_debug = zeros(size(XX));
+for i = 1:size(XX, 2)
+   this_X = [XX(:, i), YY(:, i)]; 
+   vals_debug(:, i) = int8(this_X(:,1).^2 + this_X(:,2).^2 < radius^2); 
+end
+ 
+contour(xplot, yplot, vals_debug, [0.5 0.5], 'LineColor', 'b')
 hold off;
 
 end
