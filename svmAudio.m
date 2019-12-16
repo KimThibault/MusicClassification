@@ -8,53 +8,51 @@
 
 clear ; close all; clc
 
-#[audio_data, fs] = audioread('genres/disco/disco.00000.wav');
-#[ceps,freqresp,fb,fbrecon,freqrecon] = mfcc(audio_data, fs, [10]); # TODO 
+n_tracks = 100;
+disco_tracks_features = extractFeaturesForOneGenre('disco', n_tracks);
+rock_tracks_features = extractFeaturesForOneGenre('rock', n_tracks);
 
-set_genre1 = dlmread ('audio-features/party_audio.csv',',',1,0);
-set_genre2 = dlmread ('audio-features/dinner_audio.csv',',',1,0);
+prop_train = 0.8;
+prop_crossval = 0.1;
+prop_test = 0.1;
 
-dims_set_genre1 = size(set_genre1);
-n_genre1 = dims_set_genre1(1);
-
-dims_set_genre2 = size(set_genre2);
-n_genre2 = dims_set_genre2(1);
-
-n_per_genre = min(n_genre1, n_genre2);
-
-n_train_genre2 = floor(n_per_genre * 0.8);
-n_crossval_genre2 = floor(n_per_genre * 0.1);
-n_test_genre2 = floor(n_per_genre * 0.1);
-n_train_genre1 = floor(n_per_genre * 0.8);
-n_crossval_genre1 = floor(n_per_genre * 0.1);
-n_test_genre1 = floor(n_per_genre * 0.1);
-
-
+n_train = prop_train * n_tracks;
+n_crossval = prop_crossval * n_tracks;
+n_test = prop_test * n_tracks;
 
 % Split sets into train, cross-validation and test data
 % Remove first row, which contains the column names
-data_train_genre1 = set_genre1(2:1+n_train_genre1, 3:end); 
-data_test_genre1 = set_genre1(n_train_genre1 + 2 : n_train_genre1 + n_crossval_genre1 + n_test_genre1 + 1, 3:end); 
+data_train_genre1 = disco_tracks_features(1:n_train, :); 
+data_crossval_genre1 = disco_tracks_features(1 + n_train : n_train + n_crossval, :); 
+data_test_genre1 = disco_tracks_features(1 + n_train + n_crossval : end, :); 
 
-data_train_genre2 = set_genre2(1:n_train_genre2, 3:end); 
-data_test_genre2 = set_genre2(n_train_genre2 + n_crossval_genre2 + 1 : n_train_genre2 + n_crossval_genre2 + n_test_genre2, 3:end); 
+data_train_genre2 = rock_tracks_features(1:n_train, :); 
+data_crossval_genre2 = rock_tracks_features(1 + n_train : n_train + n_crossval, :); 
+data_test_genre2 = rock_tracks_features(1 + n_train + n_crossval : end, :); 
 
-
-%% Entrainement du modele
-n_train_per_genre = min(n_train_genre2, n_train_genre1);
 
 % select certain features to plot 2 by 2 graph
-X = [[data_train_genre1(1:n_train_per_genre, 3:4)]', [data_train_genre2(1:n_train_per_genre, 3:4)]']'; 
+# Mean MFCCs 1-2, 1-3, 1-4, 2-3, 2-4, 3-4 pas separables
+feat1 = 3;
+feat2 = 4;
+X = [[data_train_genre1(1:n_train, feat1:feat2)]', [data_train_genre2(1:n_train, feat1:feat2)]']'; 
 [X, mu, sigma] = featureNormalize(X);
 
-y = [zeros(1, n_train_per_genre), ones(1, n_train_per_genre)]';
+y = [zeros(1, n_train), ones(1, n_train)]';
 plotData(X,y);
-xlim([-0.2 0]);
+#xlim([-0.2 0]);
 
-C = 1000; 
-sigma = 0.3;
-x1 = [-0.13 -0.135 -0.135 -0.14]; 
-x2 = [0 1.5 -0.5 0]; 
+C = 100;
+model = svmTrain(X, y, C, @linearKernel, 1e-3, 20);
+visualizeBoundaryLinear(X, y, model)
 
-model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma)); 
-visualizeBoundary(X, y, model);
+
+
+%
+%C = 1000; 
+%sigma = 0.3;
+%x1 = [-0.13 -0.135 -0.135 -0.14]; 
+%x2 = [0 1.5 -0.5 0]; 
+%
+%model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma)); 
+%visualizeBoundary(X, y, model);
